@@ -2,8 +2,22 @@
 
 ## Table of Contents
 1. [Introduction](#introduction)
+   - [Example](#real-time-example-of-binary-search)
+   - [Master Template](#binary-search-template-code)
 2. [Basic Problems](#basic-problems)
+   - [First Bad Version](#278-first-bad-versionhttpsleetcodecomproblemsfirst-bad-version)
+   - [Sqrt of Number](#69-sqrtx-easyhttpsleetcodecomproblemssqrtx)
+   - [Search Insertion Point](#35-search-insert-position-easyhttpsleetcodecomproblemssearch-insert-position)
 3. [Advanced Problems](#advanced-problems)
+   - [Capacity To Ship Packages Within D Days](#1011-capacity-to-ship-packages-within-d-dayshttpsleetcodecomproblemscapacity-to-ship-packages-within-d-days-medium)
+   - [Split Array Largest Sum](#410-split-array-largest-sum-hardhttpsleetcodecomproblemssplit-array-largest-sumdescription)
+   - [Koko Eating Bananas](#875-koko-eating-bananas-mediumhttpsleetcodecomproblemskoko-eating-bananasdescription)
+   - [Minimum Number of Days to Make m Bouquets](#1482-minimum-number-of-days-to-make-m-bouquets-mediumhttpsleetcodecomproblemsminimum-number-of-days-to-make-m-bouquetsdescription)
+   - [Kth Smallest Number in Multiplication Table](#668-kth-smallest-number-in-multiplication-table-hardhttpsleetcodecomproblemskth-smallest-number-in-multiplication-tabledescription)
+   - [Find K-th Smallest Pair Distance](#719-find-k-th-smallest-pair-distance-hardhttpsleetcodecomproblemsfind-k-th-smallest-pair-distancedescription)
+   - [Ugly Number III](#1201-ugly-number-iii-mediumhttpsleetcodecomproblemsugly-number-iiidescription)
+   - [Find the Smallest Divisor Given a Threshold](#1283-find-the-smallest-divisor-given-a-threshold-mediumhttpsleetcodecomproblemsfind-the-smallest-divisor-given-a-thresholddescription)
+4. [Practice Problems](#practice-problems)
 
 ## Introduction
 
@@ -41,7 +55,7 @@ Binary Search can be applied to a wide range of problems beyond simple array sea
 
 To generalize binary search, we can often frame problems as:
 
-**Minimize** \( k \), **s.t.** `condition(k)` is True.
+**Minimize** k, **subject to** `condition(k)` is True.
 
 ### Binary Search Template Code
 
@@ -77,7 +91,7 @@ public class Solution {
 
 ## Basic Problems
 
-### 1. First Bad Version (LeetCode 278)
+### [278. First Bad Version](https://leetcode.com/problems/first-bad-version/)
 **Problem**: You are a product manager and need to find the first bad version among `n` versions using the API `isBadVersion(version)`.
 
 - **Solution**: Use binary search to minimize `k` such that `isBadVersion(k)` is true.
@@ -103,9 +117,7 @@ public class Solution {
 }
 ```
 
-
-
-# 69. Sqrt(x) [Easy]
+# [69. Sqrt(x) (Easy)](https://leetcode.com/problems/sqrtx/)
 
 ### Problem
 Implement `int sqrt(int x)`. Compute and return the square root of `x` where `x` is a non-negative integer. Since the return type is an integer, the decimal digits are truncated, and only the integer part of the result is returned.
@@ -140,7 +152,7 @@ public class Solution {
 }
 ```
 
-# 35. Search Insert Position [Easy]
+# [35. Search Insert Position (Easy)](https://leetcode.com/problems/search-insert-position/)
 
 ### Problem
 Given a sorted array and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order. You may assume no duplicates in the array.
@@ -177,7 +189,7 @@ public class Solution {
 
 ## Advanced Problems
 
-# 1011. [Capacity To Ship Packages Within D Days](https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/) [Medium]
+# [1011. Capacity To Ship Packages Within D Days](https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/) [Medium]
 
 ## Problem
 A conveyor belt has packages that must be shipped from one port to another within `D` days. Each package has a weight represented by `weights[i]`. We need to determine the least weight capacity of the ship that will allow all packages to be shipped within `D` days, following the order of the weights.
@@ -206,49 +218,50 @@ With these components, we can apply the binary search template.
 ## Java Code
 
 ```java
-import java.util.List;
-
 class Solution {
-    
-   boolean feasible(int capacity) {
-      int days = 1; // Start with one day
-      int total = 0; // Total weight for the current day
+   private int[] weights;
+   private int days;
+
+   private boolean feasible(int capacity) {
+      int daysNeeded = 1;
+      int currentLoad = 0;
       for (int weight : weights) {
-         total += weight;
-         if (total > capacity) { // If total exceeds capacity, wait for the next day
-            total = weight; // Start the next day with the current weight
-            days++;
-            if (days > D) { // If days exceed D, return false
-               return false;
-            }
+         if (currentLoad + weight > capacity) {
+            daysNeeded++;
+            currentLoad = weight;
+         } else {
+            currentLoad += weight;
+         }
+         if (daysNeeded > days) return false;
+      }
+      return true;
+   }
+
+   public int shipWithinDays(int[] weights, int days) {
+      this.weights = weights;
+      this.days = days;
+
+      int left = 0;
+      int right = 0;
+      for (int weight : weights) {
+         left = Math.max(left, weight);
+         right += weight;
+      }
+
+      while (left < right) {
+         int mid = left + (right - left) / 2;
+         if (feasible(mid)) {
+            right = mid;
+         } else {
+            left = mid + 1;
          }
       }
-      return true; // All packages can be shipped within D days
+      return left;
    }
-   
-    public int shipWithinDays(List<Integer> weights, int D) {
-        // Helper function to check if a given capacity can ship within D days
-       
-
-        // Initialize boundaries for binary search
-        int left = weights.stream().max(Integer::compare).orElse(0); // Max weight
-        int right = weights.stream().mapToInt(Integer::intValue).sum(); // Sum of weights
-        
-        // Binary search to find the minimum feasible capacity
-        while (left < right) {
-            int mid = left + (right - left) / 2;
-            if (feasible(mid)) {
-                right = mid; // Try for a smaller capacity
-            } else {
-                left = mid + 1; // Increase capacity
-            }
-        }
-        return left; // Minimum capacity found
-    }
 }
 ```
 
-# 410. Split Array Largest Sum [Hard]
+# [410. Split Array Largest Sum (Hard)](https://leetcode.com/problems/split-array-largest-sum/description/)
 
 ## Problem
 Given an array of non-negative integers and an integer `m`, you can split the array into `m` non-empty continuous subarrays. The goal is to minimize the largest sum among these `m` subarrays.
@@ -281,41 +294,50 @@ This problem can be approached using binary search, similar to LC 1011. We can d
 ```java
 
 class Solution {
-    boolean feasible(int threshold) {
-        int count = 1;
-        int total = 0;
-        for (int num : nums) {
+   private int[] nums;
+   private int k;
+
+   private boolean feasible(int threshold) {
+      int count = 1;
+      int total = 0;
+      for (int num : nums) {
+         if (total + num > threshold) {
+            total = num;
+            count++;
+            if (count > k) return false;
+         } else {
             total += num;
-            if (total > threshold) {
-                total = num;
-                count++;
-                if (count > m) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+         }
+      }
+      return true;
+   }
 
-    public int splitArray(List<Integer> nums, int m) {
-        int left = nums.stream().max(Integer::compare).orElse(0);
-        int right = nums.stream().mapToInt(Integer::intValue).sum();
+   public int splitArray(int[] nums, int k) {
+      this.nums = nums;
+      this.k = k;
 
-        while (left < right) {
-            int mid = left + (right - left) / 2;
-            if (feasible(mid)) {
-                right = mid;
-            } else {
-                left = mid + 1;
-            }
-        }
-        return left;
-    }
+      int left = 0;
+      int right = 0;
+      for (int num : nums) {
+         left = Math.max(left, num);
+         right += num;
+      }
+
+      while (left < right) {
+         int mid = left + (right - left) / 2;
+         if (feasible(mid)) {
+            right = mid;
+         } else {
+            left = mid + 1;
+         }
+      }
+      return left;
+   }
 }
 
 ```
 
-# 875. Koko Eating Bananas [Medium]
+# [875. Koko Eating Bananas (Medium)](https://leetcode.com/problems/koko-eating-bananas/description/)
 
 Koko loves to eat bananas. There are N piles of bananas, the i-th pile has piles[i] bananas. The guards have gone and will come back in H hours. Koko can decide her bananas-per-hour eating speed of K. Each hour, she chooses some pile of bananas, and eats K bananas from that pile. If the pile has less than K bananas, she eats all of them instead, and won't eat any more bananas during this hour.
 
@@ -336,41 +358,48 @@ Very similar to LC 1011 and LC 410 mentioned above. Let's design a feasible func
 
 ```java
 class Solution {
-    public int minEatingSpeed(int[] piles, int h) {
-        int left = 1, right = getMax(piles);
-        
-        while (left < right) {
-            int mid = left + (right - left) / 2;
-            if (feasible(piles, h, mid)) {
-                right = mid;
-            } else {
-                left = mid + 1;
-            }
-        }
-        
-        return left;
-    }
-    
-    private boolean feasible(int[] piles, int h, int speed) {
-        int time = 0;
-        for (int pile : piles) {
-            time += (pile - 1) / speed + 1;
-        }
-        return time <= h;
-    }
-    
-    private int getMax(int[] piles) {
-        int max = piles;
-        for (int pile : piles) {
-            max = Math.max(max, pile);
-        }
-        return max;
-    }
+   public int minEatingSpeed(int[] piles, int h) {
+      int left = 1, right = getMax(piles);
+
+      while (left < right) {
+         int mid = left + (right - left) / 2;
+         if (feasible(piles, h, mid)) {
+            right = mid;
+         } else {
+            left = mid + 1;
+         }
+      }
+
+      return left;
+   }
+
+   private boolean feasible(int[] piles, int h, int speed) {
+      int time = 0;
+      for (int banana : piles) {
+         time += banana/speed;
+         if(banana % speed != 0) {
+            time++;
+         }
+         if(time > h){
+            return false;
+         }
+      }
+      return true;
+   }
+
+   private int getMax(int[] piles) {
+      int max = piles[0];
+      for (int pile : piles) {
+         max = Math.max(max, pile);
+      }
+      return max;
+   }
+   
 }
 ```
 
 
-# 1482. Minimum Number of Days to Make m Bouquets [Medium]
+# [1482. Minimum Number of Days to Make m Bouquets (Medium)](https://leetcode.com/problems/minimum-number-of-days-to-make-m-bouquets/description/)
 
 Given an integer array bloomDay, an integer m and an integer k. We need to make m bouquets. To make a bouquet, you need to use k adjacent flowers from the garden. The garden consists of n flowers, the ith flower will bloom in the bloomDay[i] and then can be used in exactly one bouquet. Return the minimum number of days you need to wait to be able to make m bouquets from the garden. If it is impossible to make m bouquets return -1.
 
@@ -433,7 +462,7 @@ class Solution {
 }
 ```
 
-# 668. Kth Smallest Number in Multiplication Table [Hard]
+# [668. Kth Smallest Number in Multiplication Table (Hard)](https://leetcode.com/problems/kth-smallest-number-in-multiplication-table/description/)
 
 Nearly everyone has used the Multiplication Table. But could you find out the k-th smallest number quickly from the multiplication table? Given the height m and the length n of an m * n Multiplication Table, and a positive integer k, you need to return the k-th smallest number in this table.
 
@@ -489,7 +518,7 @@ class Solution {
 }
 ```
 
-# 719. Find K-th Smallest Pair Distance [Hard]
+# [719. Find K-th Smallest Pair Distance (Hard)](https://leetcode.com/problems/find-k-th-smallest-pair-distance/description/)
 
 Given an integer array, return the k-th smallest distance among all the pairs. The distance of a pair (A, B) is defined as the absolute difference between A and B.
 
@@ -501,8 +530,11 @@ k = 1
 Output: 0
 Explanation:
 Following are all the pairs. The 1st smallest distance pair is (1,1), and its distance is 0.
+
 (1,3) -> 2
+
 (1,1) -> 0
+
 (3,1) -> 2
 
 ## Solution
@@ -511,39 +543,39 @@ We can use binary search to find the k-th smallest distance. The key is to desig
 
 ```java
 class Solution {
-    public int smallestDistancePair(int[] nums, int k) {
-        Arrays.sort(nums);
-        int n = nums.length;
-        int left = 0;
-        int right = nums[n - 1] - nums;
-        
-        while (left < right) {
-            int mid = left + (right - left) / 2;
-            if (enough(nums, mid, k)) {
-                right = mid;
-            } else {
-                left = mid + 1;
-            }
-        }
-        
-        return left;
-    }
-    
-    private boolean enough(int[] nums, int distance, int k) {
-        int count = 0;
-        int i = 0;
-        for (int j = 0; j < nums.length; j++) {
-            while (nums[j] - nums[i] > distance) {
-                i++;
-            }
-            count += j - i;
-        }
-        return count >= k;
-    }
+   public int smallestDistancePair(int[] nums, int k) {
+      Arrays.sort(nums);
+      int n = nums.length;
+      int left = 0;
+      int right = nums[n - 1] - nums[0];
+
+      while (left < right) {
+         int mid = left + (right - left) / 2;
+         if (enough(nums, mid, k)) {
+            right = mid;
+         } else {
+            left = mid + 1;
+         }
+      }
+
+      return left;
+   }
+
+   private boolean enough(int[] nums, int distance, int k) {
+      int count = 0;
+      int i = 0;
+      for (int j = 0; j < nums.length; j++) {
+         while (nums[j] - nums[i] > distance) {
+            i++;
+         }
+         count += j - i;
+      }
+      return count >= k;
+   }
 }
 ```
 
-# 1201. Ugly Number III [Medium]
+# [1201. Ugly Number III (Medium)](https://leetcode.com/problems/ugly-number-iii/description/)
 
 Write a program to find the n-th ugly number. Ugly numbers are positive integers which are divisible by a or b or c.
 
@@ -600,7 +632,7 @@ class Solution {
 }
 ```
 
-# 1283. Find the Smallest Divisor Given a Threshold [Medium]
+# [1283. Find the Smallest Divisor Given a Threshold (Medium)](https://leetcode.com/problems/find-the-smallest-divisor-given-a-threshold/description/)
 
 Given an array of integers `nums` and an integer `threshold`, we will choose a positive integer divisor and divide all the array by it and sum the result of the division. Find the smallest divisor such that the result mentioned above is less than or equal to `threshold`.
 
@@ -655,13 +687,22 @@ class Solution {
 
 ## Practice Problems:
 
-1. [First Bad Version](https://leetcode.com/problems/first-bad-version/)
-2. [Sqrt(x)](https://leetcode.com/problems/sqrtx/)
-3. [Search Insert Position](https://leetcode.com/problems/search-insert-position/)
-4. [Binary Search](https://leetcode.com/problems/binary-search/)
-5. [Guess Number Higher or Lower](https://leetcode.com/problems/guess-number-higher-or-lower/)
-6. [Find Peak Element](https://leetcode.com/problems/find-peak-element/)
-7. [Find Minimum in Rotated Sorted Array](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/)
-8. [Leftmost Column with at Least a One](https://leetcode.com/problems/leftmost-column-with-at-least-a-one/)
-9. [Minimum in Rotated Sorted Array II](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/)
-10. [Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array/)
+# Binary Search Problem List
+
+1. [Guess Number Higher or Lower (Easy)](https://leetcode.com/problems/guess-number-higher-or-lower/)
+3. [Binary Search (Easy)](https://leetcode.com/problems/binary-search/)
+4. [Search in Rotated Sorted Array (Medium)](https://leetcode.com/problems/search-in-rotated-sorted-array/)
+5. [Find Minimum in Rotated Sorted Array (Medium)](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/)
+6. [Peak Index in a Mountain Array (Medium)](https://leetcode.com/problems/peak-index-in-a-mountain-array/)
+7. [Find Peak Element (Medium)](https://leetcode.com/problems/find-peak-element/)
+8. [Search a 2D Matrix (Medium)](https://leetcode.com/problems/search-a-2d-matrix/)
+10. [Find the Duplicate Number (Medium)](https://leetcode.com/problems/find-the-duplicate-number/)
+13. [Find Smallest Letter Greater Than Target (Easy)](https://leetcode.com/problems/find-smallest-letter-greater-than-target/)
+14. [Single Element in a Sorted Array (Medium)](https://leetcode.com/problems/single-element-in-a-sorted-array/)
+15. [Count Negative Numbers in a Sorted Matrix (Easy)](https://leetcode.com/problems/count-negative-numbers-in-a-sorted-matrix/)
+16. [Time Based Key-Value Store (Medium)](https://leetcode.com/problems/time-based-key-value-store/)
+17. [Find First and Last Position of Element in Sorted Array (Medium)](https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/)
+18. [Search in Rotated Sorted Array II (Medium)](https://leetcode.com/problems/search-in-rotated-sorted-array-ii/)
+19. [Find Minimum in Rotated Sorted Array II (Hard)](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/)
+20. [Kth Smallest Element in a Sorted Matrix (Medium)](https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/)
+22. [Median of Two Sorted Arrays (Hard)](https://leetcode.com/problems/median-of-two-sorted-arrays/)
