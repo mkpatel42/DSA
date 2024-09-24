@@ -3,7 +3,7 @@
 ## Table of Contents
 1. [Introduction](#introduction)
    - [Example](#real-time-example-of-binary-search)
-   - [Master Template](#binary-search-template-code)
+   - [Master Template](#general-binary-search-template)
 2. [Basic Problems](#basic-problems)
    - [First Bad Version](#278-first-bad-versionhttpsleetcodecomproblemsfirst-bad-version)
    - [Sqrt of Number](#69-sqrtx-easyhttpsleetcodecomproblemssqrtx)
@@ -686,23 +686,20 @@ class Solution {
 ```
 
 ## Practice Problems:
-
-# Binary Search Problem List
-
 1. [Guess Number Higher or Lower (Easy)](https://leetcode.com/problems/guess-number-higher-or-lower/)
-3. [Binary Search (Easy)](https://leetcode.com/problems/binary-search/)
-4. [Search in Rotated Sorted Array (Medium)](https://leetcode.com/problems/search-in-rotated-sorted-array/)
-5. [Find Minimum in Rotated Sorted Array (Medium)](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/)
-6. [Peak Index in a Mountain Array (Medium)](https://leetcode.com/problems/peak-index-in-a-mountain-array/)
-7. [Find Peak Element (Medium)](https://leetcode.com/problems/find-peak-element/)
-8. [Search a 2D Matrix (Medium)](https://leetcode.com/problems/search-a-2d-matrix/)
-10. [Find the Duplicate Number (Medium)](https://leetcode.com/problems/find-the-duplicate-number/)
-13. [Find Smallest Letter Greater Than Target (Easy)](https://leetcode.com/problems/find-smallest-letter-greater-than-target/)
-14. [Single Element in a Sorted Array (Medium)](https://leetcode.com/problems/single-element-in-a-sorted-array/)
-15. [Count Negative Numbers in a Sorted Matrix (Easy)](https://leetcode.com/problems/count-negative-numbers-in-a-sorted-matrix/)
-16. [Time Based Key-Value Store (Medium)](https://leetcode.com/problems/time-based-key-value-store/)
-17. [Find First and Last Position of Element in Sorted Array (Medium)](https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/)
-18. [Search in Rotated Sorted Array II (Medium)](https://leetcode.com/problems/search-in-rotated-sorted-array-ii/)
-19. [Find Minimum in Rotated Sorted Array II (Hard)](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/)
-20. [Kth Smallest Element in a Sorted Matrix (Medium)](https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/)
-22. [Median of Two Sorted Arrays (Hard)](https://leetcode.com/problems/median-of-two-sorted-arrays/)
+2. [Binary Search (Easy)](https://leetcode.com/problems/binary-search/)
+3. [Search in Rotated Sorted Array (Medium)](https://leetcode.com/problems/search-in-rotated-sorted-array/)
+4. [Find Minimum in Rotated Sorted Array (Medium)](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/)
+5. [Peak Index in a Mountain Array (Medium)](https://leetcode.com/problems/peak-index-in-a-mountain-array/)
+6. [Find Peak Element (Medium)](https://leetcode.com/problems/find-peak-element/)
+7. [Search a 2D Matrix (Medium)](https://leetcode.com/problems/search-a-2d-matrix/)
+8. [Find the Duplicate Number (Medium)](https://leetcode.com/problems/find-the-duplicate-number/)
+9. [Find Smallest Letter Greater Than Target (Easy)](https://leetcode.com/problems/find-smallest-letter-greater-than-target/)
+10. [Single Element in a Sorted Array (Medium)](https://leetcode.com/problems/single-element-in-a-sorted-array/)
+11. [Count Negative Numbers in a Sorted Matrix (Easy)](https://leetcode.com/problems/count-negative-numbers-in-a-sorted-matrix/)
+12. [Time Based Key-Value Store (Medium)](https://leetcode.com/problems/time-based-key-value-store/)
+13. [Find First and Last Position of Element in Sorted Array (Medium)](https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/)
+14. [Search in Rotated Sorted Array II (Medium)](https://leetcode.com/problems/search-in-rotated-sorted-array-ii/)
+15. [Find Minimum in Rotated Sorted Array II (Hard)](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/)
+16. [Kth Smallest Element in a Sorted Matrix (Medium)](https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/)
+17. [Median of Two Sorted Arrays (Hard)](https://leetcode.com/problems/median-of-two-sorted-arrays/)
