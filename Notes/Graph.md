@@ -1,3 +1,25 @@
+# Table of Contents
+
+1. [What is Graph?](#what-is-graph)
+2. [Types of Graphs](#types-of-graphs)
+    - [Undirected Graph](#undirected-graph)
+    - [Directed Graph (Digraph)](#directed-graph-digraph)
+    - [Cyclic and Acyclic Graphs](#cyclic-and-acyclic-graphs)
+3. [Graph Representation](#graph-representation)
+    - [1. Adjacency Matrix](#1-adjacency-matrix)
+    - [2. Adjacency List](#2-adjacency-list)
+4. [Graph Traversal](#graph-traversal)
+    - [BFS](#bfs)
+    - [DFS](#dfs)
+5. [Cycle Detection in Undirected Graph](#cycle-detection-in-undirected-graph)
+    - [Using BFS](#cycle-detection-in-undirected-graph-using-bfs)
+    - [Using DFS](#cycle-detection-in-undirected-graph-using-dfs)
+6. [Bipartite Graph](#bipartite-graph)
+    - [Using BFS](#bipartite-graph-bfs)
+    - [Using DFS](#bipartite-graph-dfs)
+7. [Cycle Detection in Directed Graph Using DFS](#cycle-detection-in-directed-graph-using-dfs)
+8. [Topological Sort Using DFS](#topological-sort-using-dfs)
+
 
 ## What is Graph?
 ![img_3.png](Assets/img_3.png)
@@ -83,19 +105,13 @@ class Graph {
 }
 ```
 
-### Time Complexity
-- **Adding an Edge**: \(O(1)\)
-    - Directly accessing the matrix element requires constant time.
-- **Removing an Edge**: \(O(1)\)
-    - Similarly, removing an edge also takes constant time.
-- **Checking if an Edge Exists**: \(O(1)\)
-    - Accessing the matrix to check for an edge is a constant time operation.
-- **Iterating over All Edges**: \(O(V^2)\)
-    - You need to check each possible edge in the matrix.
-
-### Space Complexity
-- **Space Complexity**: \(O(V^2)\)
-    - An adjacency matrix uses space proportional to the square of the number of vertices, where \(V\) is the number of vertices.
+### Key Points:
+- Space Complexity: O(V^2)
+- Adding an Edge: O(1)
+- Removing an Edge: O(1)
+- Checking if an Edge Exists: O(1)
+- Iterating over All Edges: O(V^2)
+- Efficient for dense graphs but uses more space
 
 ## 2. Adjacency List
 
@@ -130,26 +146,13 @@ class Graph {
 }
 ```
 
-### Time Complexity
-- **Adding an Edge**: \(O(1)\)
-    - Adding an edge to a list is a constant time operation.
-- **Removing an Edge**: \(O(V)\)
-    - In the worst case, you may need to search through the list of neighbors to remove an edge.
-- **Checking if an Edge Exists**: \(O(V)\)
-    - You may need to traverse the list of adjacent vertices to check for the presence of an edge.
-- **Iterating over All Edges**: \(O(E)\)
-    - You only iterate through the edges that exist, where \(E\) is the number of edges.
-
-### Space Complexity
-- **Space Complexity**: \(O(V + E)\)
-    - An adjacency list requires space for all vertices and edges, making it more space-efficient than an adjacency matrix for sparse graphs.
-
----
-
-## Conclusion
-- **Adjacency Matrix**: Efficient for dense graphs but uses more space.
-- **Adjacency List**: More space-efficient for sparse graphs but may require more time for certain operations.
-
+### Key Points:
+- Space Complexity: O(V + E)
+- Adding an Edge: O(1)
+- Removing an Edge: O(V)
+- Checking if an Edge Exists: O(V)
+- Iterating over All Edges: O(E)
+- More space-efficient for sparse graphs
 
 # Graph Traversal
 
@@ -232,12 +235,14 @@ class Solution {
     }
 }
 ```
-**Time Complexity:** O(N) + O(2E), Where N = Nodes, 2E is for total degrees as we traverse all adjacent nodes.
 
-**Space Complexity:** O(3N) ~ O(N), Space for queue data structure visited array and an adjacency list
-
-### Important:
-If we have more than one components in graph then we need to iterate all the vertices and if !visited then need to call *bfsFromVertex()*.
+### Key Points:
+- Uses a queue for traversal
+- Explores nodes level by level
+- Time Complexity: O(V + E)
+- Space Complexity: O(V)
+- Useful for finding shortest path in unweighted graphs
+- If we have more than one components in graph then we need to iterate all the vertices and if !visited then need to call *bfsFromVertex()*.
 
 ![img.png](Assets/img.png)
 
@@ -273,15 +278,12 @@ Depth-First Search (DFS) is an algorithm used to traverse or search through the 
 5. **Repeat**:
     - Continue until all nodes in the connected component are visited.
 
-## Time and Space Complexity
-- **Time Complexity**:
-    - \(O(V + E)\)
-        - Where \(V\) is the number of vertices and \(E\) is the number of edges. Every vertex and edge is processed once.
-
-- **Space Complexity**:
-    - \(O(V)\)
-        - In the worst case, all vertices could be stored in the stack (for recursion).
-        
+### Key Points:
+- Uses recursion or a stack for traversal
+- Explores as far as possible along each branch before backtracking
+- Time Complexity: O(V + E)
+- Space Complexity: O(V)
+- Useful for topological sorting and cycle detection
 
 ```java
 import java.util.ArrayList;
@@ -373,6 +375,11 @@ class Solution {
     }
 }
 ```
+### Key Points:
+- Checks if a visited node is not the parent of the current node
+- Time Complexity: O(V + E)
+- Space Complexity: O(V)
+
 ## Cycle Detection in Undirected Graph using DFS
 
 **Hint:** If adjacent node (next node) is already visited then cycle is present
@@ -410,6 +417,10 @@ class Solution {
     }
 }
 ```
+### Key Points:
+- Checks if a visited node is not the parent of the current node
+- Time Complexity: O(V + E)
+- Space Complexity: O(V)
 
 ## Bipartite Graph (BFS) | Graph Coloring:
 
@@ -541,3 +552,147 @@ class solution{
     }
 }
 ```
+
+### Key Points:
+- Uses two arrays: one for visited nodes and one for nodes in the current path
+- remove current path in backtracking
+- Time Complexity: O(V + E)
+- Space Complexity: O(V)
+
+## Topological sort using DFS
+Topological sorting is linear ordering of vertices such that if there is an edge u -> v then u appears before v in that ordering
+
+
+## Example
+Imagine you are managing a software development project with several tasks that need to be completed in a specific order. Some tasks depend on the completion of others before they can start.
+
+### Tasks:
+- **Task A**: Requirements Gathering
+- **Task B**: Design
+- **Task C**: Implementation
+- **Task D**: Testing
+- **Task E**: Deployment
+
+### Dependencies:
+- Task A must be completed before Task B can start.
+- Task A must be completed before Task C can start.
+- Task B must be completed before Task D can start.
+- Task C must be completed before Task D can start.
+- Task D must be completed before Task E can start.
+
+![Description](Assets/graphviz.svg)
+
+For above image, One of the possible topological sort: 5, 4, 2, 3, 1, 0 (edge will be left to right)
+
+**Topological Sort is possible for only DAG**
+
+**Hint:**
+- Maintain visited array & a satck to store the topological sort
+- If adjacent of the node are done then push the node into stack (means we already have adjacent nodes into stack)
+
+```Java
+class Solution{
+    static void findTopoSort(int node, int vis[], ArrayList<ArrayList<Integer>> adj, Stack<Integer> st) {
+        vis[node] = 1;
+        for(Integer it: adj.get(node)) {
+            if(vis[it] == 0) {
+                findTopoSort(it, vis, adj, st);
+            }
+        }
+        st.push(node);
+    }
+    static int[] topoSort(int N, ArrayList<ArrayList<Integer>> adj) {
+        Stack<Integer> st = new Stack<Integer>();
+        int vis[] = new int[N];
+
+        for(int i = 0;i<N;i++) {
+            if(vis[i] == 0) {
+                findTopoSort(i, vis, adj, st);
+            }
+        }
+
+        int topo[] = new int[N];
+        int ind = 0;
+        while(!st.isEmpty()) {
+            topo[ind++] = st.pop();
+        }
+        // for(int i = 0;i<N;i++) System.out.println(topo[i] + " "); 
+        return topo;
+    }
+}
+```
+### Key Points:
+- Works only on Directed Acyclic Graphs (DAGs)
+- Uses a stack to store nodes after exploring all neighbors
+- Time Complexity: O(V + E)
+- Space Complexity: O(V)
+
+## Topological sort using BFS | Kahn's Algo
+***Hint:**
+- Node will lesser indegree will come before greater indegree
+
+### Steps:
+
+1. Calculate in-degree (number of incoming edges) for each vertex and store it in an array.
+
+2. Create a queue and add all vertices with in-degree 0 to it.
+
+3. Initialize an empty list to store the topological order.
+
+4. While the queue is not empty:
+    - Remove a vertex from the queue (dequeue)
+    - Add it to the topological order list
+    - Reduce in-degree by 1 for all its neighboring vertices
+    - If in-degree of a neighboring vertex becomes 0, add it to the queue
+
+5. If the topological order list contains all vertices, return it. Otherwise, the graph has at least one cycle.
+
+```Java
+class Solution {
+    // Function to return list containing vertices in Topological order.
+    static int[] topoSort(int V, ArrayList<ArrayList<Integer>> adj) {
+        int indegree[] = new int[V];
+        for (int i = 0; i < V; i++) {
+            for (int it : adj.get(i)) {
+                indegree[it]++;
+            }
+        }
+
+        Queue<Integer> q = new LinkedList<Integer>();
+        ;
+        for (int i = 0; i < V; i++) {
+            if (indegree[i] == 0) {
+                q.add(i);
+            }
+        }
+
+        int topo[] = new int[V];
+        int i = 0;
+        while (!q.isEmpty()) {
+            int node = q.peek();
+            q.remove();
+            topo[i++] = node;
+            // node is in your topo sort
+            // so please remove it from the indegree
+
+            for (int it : adj.get(node)) {
+                indegree[it]--;
+                if (indegree[it] == 0) {
+                    q.add(it);
+                }
+            }
+        }
+
+        return topo;
+    }
+}
+
+```
+### Key Points:
+- Works only for Directed Acyclic Graphs (DAGs)
+- Detects cycles in the graph
+- Time Complexity: O(V + E), where V is the number of vertices and E is the number of edges
+- Space Complexity: O(V)
+
+## Shortest Path in weighted DAG
+**Given a source node, find shortest path length from src to every other node**
