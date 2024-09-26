@@ -18,8 +18,10 @@
     - [Using BFS](#bipartite-graph-bfs)
     - [Using DFS](#bipartite-graph-dfs)
 7. [Cycle Detection in Directed Graph Using DFS](#cycle-detection-in-directed-graph-using-dfs)
-8. [Topological Sort Using DFS](#topological-sort-using-dfs)
-
+8. [Topological Sort](#topological-sort)
+    - [Topological Sort Using DFS](#topological-sort-using-dfs)
+    - [Topological Sort Using BFS](#topological-sort-using-bfs--kahns-algo)
+   
 
 ## What is Graph?
 ![img_3.png](Assets/img_3.png)
@@ -559,7 +561,7 @@ class solution{
 - Time Complexity: O(V + E)
 - Space Complexity: O(V)
 
-## Topological sort using DFS
+## Topological Sort
 Topological sorting is linear ordering of vertices such that if there is an edge u -> v then u appears before v in that ordering
 
 
@@ -583,7 +585,7 @@ Imagine you are managing a software development project with several tasks that 
 ![Description](Assets/graphviz.svg)
 
 For above image, One of the possible topological sort: 5, 4, 2, 3, 1, 0 (edge will be left to right)
-
+## Topological sort using DFS
 **Topological Sort is possible for only DAG**
 
 **Hint:**
@@ -696,3 +698,738 @@ class Solution {
 
 ## Shortest Path in weighted DAG
 **Given a source node, find shortest path length from src to every other node**
+
+**Hint:**
+1) Store topological sort in stack using dfs
+2) Make a distance array, mark src as 0 & all other node as ∞
+3) While Stack is not empty
+   - pop element, for example U
+   - see the adjacents node of u, dist of adjacent node = MIN(dist[adj_node], dist[U] + weight on edge of U & adj. node)
+
+```Java
+class Solution {
+  private void topoSort(int node, ArrayList < ArrayList < Pair >> adj,
+    int vis[], Stack < Integer > st) {
+    //This is the function to implement Topological sort. 
+
+    vis[node] = 1;
+    for (int i = 0; i < adj.get(node).size(); i++) {
+      int v = adj.get(node).get(i).first;
+      if (vis[v] == 0) {
+        topoSort(v, adj, vis, st);
+      }
+    }
+    st.add(node);
+  }
+  public int[] shortestPath(int N, int M, int[][] edges) {
+    ArrayList < ArrayList < Pair >> adj = new ArrayList < > ();
+    for (int i = 0; i < N; i++) {
+      ArrayList < Pair > temp = new ArrayList < Pair > ();
+      adj.add(temp);
+    }
+    //We create a graph first in the form of an adjacency list.
+
+    for (int i = 0; i < M; i++) {
+      int u = edges[i][0];
+      int v = edges[i][1];
+      int wt = edges[i][2];
+      adj.get(u).add(new Pair(v, wt));
+    }
+    int vis[] = new int[N];
+    //Now, we perform topo sort using DFS technique 
+    //and store the result in the stack st.
+
+    Stack < Integer > st = new Stack < > ();
+    for (int i = 0; i < N; i++) {
+      if (vis[i] == 0) {
+        topoSort(i, adj, vis, st);
+      }
+    }
+    //Further, we declare a vector ‘dist’ in which we update the value of the nodes’
+    //distance from the source vertex after relaxation of a particular node.
+    int dist[] = new int[N];
+    for (int i = 0; i < N; i++) {
+      dist[i] = (int)(1e9);
+    }
+
+    dist[0] = 0;
+    while (!st.isEmpty()) {
+      int node = st.peek();
+      st.pop();
+
+      for (int i = 0; i < adj.get(node).size(); i++) {
+        int v = adj.get(node).get(i).first;
+        int wt = adj.get(node).get(i).second;
+
+        if (dist[node] + wt < dist[v]) {
+          dist[v] = wt + dist[node];
+        }
+      }
+    }
+
+    for (int i = 0; i < N; i++) {
+      if (dist[i] == 1e9) dist[i] = -1;
+    }
+    return dist;
+  }
+}
+```
+
+### Dijktra's Algorithm
+**Given a weighted undircetd graph, find shortest path from src node to every other node**
+
+![Description](Assets/graphviz2.svg)
+
+**Hint:**
+1) Maintain a min heap of pair {distance, node}
+2) Make a distance array, mark src as 0 & all other node as ∞
+3) While Min Heap is not empty
+   - take top element, for example U
+   - find better distance, update in visited array & push into heap
+   
+
+```Java
+class Solution
+{
+    //Function to find the shortest distance of all the vertices
+    //from the source vertex S.
+    static int[] dijkstra(int V, ArrayList<ArrayList<ArrayList<Integer>>> adj, int S)
+    {
+        // Create a priority queue for storing the nodes as a pair {dist, node
+        // where dist is the distance from source to the node.  
+        PriorityQueue<Pair> pq = 
+        new PriorityQueue<Pair>((x,y) -> x.distance - y.distance);
+        
+        int []dist = new int[V]; 
+      
+        // Initialising distTo list with a large number to
+        // indicate the nodes are unvisited initially.
+        // This list contains distance from source to the nodes.
+        for(int i = 0;i<V;i++) dist[i] = (int)(1e9); 
+        
+        // Source initialised with dist=0.
+        dist[S] = 0;
+        pq.add(new Pair(0,S)); 
+        
+        // Now, pop the minimum distance node first from the min-heap
+        // and traverse for all its adjacent nodes.
+        while(pq.size() != 0) {
+            int dis = pq.peek().distance; 
+            int node = pq.peek().node; 
+            pq.remove(); 
+            
+            // Check for all adjacent nodes of the popped out
+            // element whether the prev dist is larger than current or not.
+            for(int i = 0;i<adj.get(node).size();i++) {
+                int edgeWeight = adj.get(node).get(i).get(1); 
+                int adjNode = adj.get(node).get(i).get(0); 
+                
+                // If current distance is smaller,
+                // push it into the queue.
+                if(dis + edgeWeight < dist[adjNode]) {
+                    dist[adjNode] = dis + edgeWeight; 
+                    pq.add(new Pair(dist[adjNode], adjNode)); 
+                }
+            }
+        }
+        // Return the list containing shortest distances
+        // from source to all the nodes.
+        return dist; 
+    }
+}
+```
+
+### Bellman Form Algorithm
+
+**The Bellman-Ford algorithm is used to find the shortest paths from a single source to all vertices in a graph, including graphs with negative weight edges.**
+- If graph have negative weight then dijkstra's algo will not work
+- This algo also help to find negative cycle
+
+1) Relaxation: The Bellman-Ford algorithm is based on a concept called relaxation. Relaxation involves trying to improve the shortest path to a vertex by checking if a path through another vertex provides a shorter path.
+
+2) For every edge (u, v) with weight w, if the current known distance to v is greater than the distance to u plus w (i.e., distance[u] + w < distance[v]), then update the distance to v through u.
+Iterative Approach: Bellman-Ford repeats this relaxation process for all edges in the graph. This is done exactly V-1 times, where V is the number of vertices. After V-1 iterations, the shortest paths from the source to all vertices are guaranteed to be found (if no negative weight cycle exists).
+
+
+**Why V-1 times?** Because the shortest path can have at most V-1 edges, so after V-1 relaxations, all shortest paths are discovered.
+
+3) Negative Weight Cycle Detection: If further relaxation is possible after V-1 iterations, it means that a shorter path is still being found, which indicates the presence of a negative weight cycle.
+
+```Java
+class Solution{
+    
+static int[] bellman_ford(int V,
+ArrayList<ArrayList<Integer>> edges, int S) {
+   int[] dist = new int[V];
+   for (int i = 0; i < V; i++) dist[i] = (int)(1e8);
+   dist[S] = 0;
+   // V x E
+   for (int i = 0; i < V - 1; i++) {
+       for (ArrayList<Integer> it : edges) {
+           int u = it.get(0);
+           int v = it.get(1);
+           int wt = it.get(2);
+           if (dist[u] != 1e8 && dist[u] + wt < dist[v]) {
+               dist[v] = dist[u] + wt;
+           }
+       }
+   }
+   // Nth relaxation to check negative cycle
+   for (ArrayList<Integer> it : edges) {
+       int u = it.get(0);
+       int v = it.get(1);
+       int wt = it.get(2);
+       if (dist[u] != 1e8 && dist[u] + wt < dist[v]) {
+           int temp[] = new int[1];
+           temp[0] = -1;
+           return temp;
+       }
+   }
+   return dist;
+}
+}
+
+```
+## Floyd Warshall Algorithm
+
+**The problem is to find the shortest distances between every pair of vertices in a given edge-weighted directed graph.**
+
+The graph is represented as an adjacency matrix of size n*n. Matrix[i][j] denotes the weight of the edge from i to j. If Matrix[i][j]=-1, it means there is no edge from i to j.
+
+```
+Input Format:
+matrix[][] = { {0, 2, -1, -1},
+{1, 0, 3, -1},{-1, -1, 0, -1},{3, 5, 4, 0} }
+
+
+Result:
+0 2 5 -1
+1 0 3 -1
+-1 -1 0 -1
+3 5 4 0
+```
+**Explanation:** In this example, the final matrix
+is storing the shortest distances. For example, matrix[i][j] is
+storing the shortest distance from node i to j.
+
+Dijkstra’s Shortest Path algorithm and Bellman-Ford algorithm are single-source shortest path algorithms where we are given a single source node and are asked to find out the shortest path to every other node from that given source. But in the Floyd Warshall algorithm, we need to figure out the shortest distance from each node to every other node.
+
+Basically, the Floyd Warshall algorithm is a multi-source shortest path algorithm and it helps to detect negative cycles as well. The shortest path between node u and v necessarily means the path(from u to v) for which the sum of the edge weights is minimum.
+
+In Floyd Warshall’s algorithm, we need to check every possible path going via each possible node. And after checking every possible path, we will figure out the shortest path(a kind of brute force approach to find the shortest path).
+
+**How to detect a negative cycle using the Floyd Warshall algorithm?**
+
+In a graph without negative cycles, the distance from any vertex to itself should be 0. If we find a negative distance from a vertex to itself after running Floyd-Warshall, it indicates the presence of a negative cycle.
+
+```Java
+class Solution {
+   public void shortest_distance(int[][] matrix) {
+      int n = matrix.length;
+      for (int i = 0; i < n; i++) {
+         for (int j = 0; j < n; j++) {
+            if (matrix[i][j] == -1) {
+               matrix[i][j] = (int) (1e9);
+            }
+            if (i == j) matrix[i][j] = 0;
+         }
+      }
+
+      for (int k = 0; k < n; k++) {
+         for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+               matrix[i][j] = Math.min(matrix[i][j],
+                       matrix[i][k] + matrix[k][j]);
+            }
+         }
+      }
+
+      for (int i = 0; i < n; i++) {
+         for (int j = 0; j < n; j++) {
+            if (matrix[i][j] == (int) (1e9)) {
+               matrix[i][j] = -1;
+            }
+         }
+      }
+   }
+}
+
+```
+## MST (Minimum Spanning Tree)
+- If graph has N nodes then spanning tree will have N nodes and N-1 edges
+- MST is spanning tree with minimum cost
+
+
+![MST](Assets/mst.svg)
+
+#### Output
+
+![MST Output](Assets/mst_output.svg)
+
+
+
+
+### Prims's Algorithm
+- Used to find MST
+
+**Hint:**
+1) Take any one node for tree
+2) Now check the adjacent edge of all the nodes taken till now in the tree & take the edge with minimum weight
+3) Repeat step 2 N-1 times
+
+Take the edge with minimum weight --> We need priority Queue (Min Heap)
+
+```Java
+class Edge {
+   int destination;
+   int weight;
+
+   Edge(int destination, int weight) {
+      this.destination = destination;
+      this.weight = weight;
+   }
+}
+
+public class PrimsAlgorithm {
+   public static void main(String[] args) {
+      int vertices = 5; 
+      List<List<Edge>> graph = new ArrayList<>(vertices);
+
+      for (int i = 0; i < vertices; i++) {
+         graph.add(new ArrayList<>());
+      }
+
+      addEdge(graph, 0, 1, 2);
+      addEdge(graph, 0, 3, 6);
+      addEdge(graph, 1, 2, 3);
+      addEdge(graph, 1, 3, 8);
+      addEdge(graph, 1, 4, 5);
+      addEdge(graph, 2, 4, 7);
+      addEdge(graph, 3, 0, 6);
+      addEdge(graph, 3, 1, 8);
+      addEdge(graph, 4, 1, 5);
+      addEdge(graph, 4, 2, 7);
+
+      primsMST(graph, vertices);
+   }
+
+   private static void addEdge(List<List<Edge>> graph, int source, int destination, int weight) {
+      graph.get(source).add(new Edge(destination, weight));
+      graph.get(destination).add(new Edge(source, weight)); // For undirected graph
+   }
+
+   private static void primsMST(List<List<Edge>> graph, int vertices) {
+      boolean[] inMST = new boolean[vertices];
+      PriorityQueue<Edge> pq = new PriorityQueue<>(Comparator.comparingInt(e -> e.weight));
+
+      // Start from the first vertex
+      inMST[0] = true;
+      for (Edge edge : graph.get(0)) {
+         pq.offer(edge);
+      }
+
+      int totalWeight = 0;
+      System.out.println("Edges in the Minimum Spanning Tree:");
+
+      while (!pq.isEmpty()) {
+         Edge minEdge = pq.poll();
+         int dest = minEdge.destination;
+
+         // If the destination vertex is already included in the MST, skip it
+         if (inMST[dest]) {
+            continue;
+         }
+
+         // Include the edge in the MST
+         inMST[dest] = true;
+         totalWeight += minEdge.weight;
+         System.out.println("Edge: 0 - " + dest + " with weight " + minEdge.weight);
+
+         // Add edges from the newly added vertex to the priority queue
+         for (Edge edge : graph.get(dest)) {
+            if (!inMST[edge.destination]) {
+               pq.offer(edge);
+            }
+         }
+      }
+
+      System.out.println("Total weight of the Minimum Spanning Tree: " + totalWeight);
+   }
+}
+
+```
+### Disjoint Set
+# Disjoint Set (Union-Find)
+
+## What is a Disjoint Set?
+
+A **Disjoint Set**, also known as a **Union-Find** data structure, is a collection of non-overlapping (disjoint) sets. It provides efficient methods for:
+
+1. **Union**: Merging two sets into a single set.
+2. **Find**: Determining which set a particular element belongs to.
+
+### Key Techniques
+
+- **Path Compression**: Optimizes the `find` operation by flattening the structure of the tree whenever `find` is called, which speeds up future queries.
+- **Union by Rank**: Optimizes the `union` operation by attaching the smaller tree under the root of the larger tree, which helps keep the tree flat.
+
+## Why Use Disjoint Set?
+
+1. **Efficiency**: Provides near constant time operations for union and find due to optimizations, making it suitable for applications with many operations.
+2. **Dynamic Connectivity**: Useful for managing a collection of disjoint sets dynamically.
+3. **Graph Algorithms**: Commonly used in algorithms for finding connected components, such as Kruskal's algorithm for Minimum Spanning Trees and checking for cycles in a graph.
+
+## When to Use Disjoint Set?
+
+1. **Kruskal's Algorithm**: When implementing Kruskal’s algorithm for finding the Minimum Spanning Tree (MST) of a graph.
+
+2. **Network Connectivity**: Managing and querying connectivity in networks, such as social networks.
+
+3. **Image Processing**: Grouping pixels based on connectivity in image segmentation.
+
+4. **Dynamic Connectivity Problems**: Any problem involving merging sets and querying membership, such as connectivity queries in dynamic graphs.
+
+```java
+class DisjointSet {
+   List<Integer> rank = new ArrayList<>();
+   List<Integer> parent = new ArrayList<>();
+   public DisjointSet(int n) {
+      for (int i = 0; i <= n; i++) {
+         rank.add(0);
+         parent.add(i);
+      }
+   }
+
+   public int findUPar(int node) {
+      if (node == parent.get(node)) {
+         return node;
+      }
+      int ulp = findUPar(parent.get(node));
+      parent.set(node, ulp);
+      return parent.get(node);
+   }
+
+   public void unionByRank(int u, int v) {
+      int ulp_u = findUPar(u);
+      int ulp_v = findUPar(v);
+      if (ulp_u == ulp_v) return;
+      if (rank.get(ulp_u) < rank.get(ulp_v)) {
+         parent.set(ulp_u, ulp_v);
+      } else if (rank.get(ulp_v) < rank.get(ulp_u)) {
+         parent.set(ulp_v, ulp_u);
+      } else {
+         parent.set(ulp_v, ulp_u);
+         int rankU = rank.get(ulp_u);
+         rank.set(ulp_u, rankU + 1);
+      }
+   }
+
+}
+
+class Main {
+   public static void main (String[] args) {
+      DisjointSet ds = new DisjointSet(7);
+      ds.unionByRank(1, 2);
+      ds.unionByRank(2, 3);
+      ds.unionByRank(4, 5);
+      ds.unionByRank(6, 7);
+      ds.unionByRank(5, 6);
+
+      // if 3 and 7 same or not
+      if (ds.findUPar(3) == ds.findUPar(7)) {
+         System.out.println("Same");
+      } else
+         System.out.println("Not Same");
+
+      ds.unionByRank(3, 7);
+      if (ds.findUPar(3) == ds.findUPar(7)) {
+         System.out.println("Same");
+      } else
+         System.out.println("Not Same");
+   }
+}
+
+```
+### Kruskal's Algorithm
+- used to find MST
+- It is an application of Disjoint Set
+
+**Hint:**
+1) Sort all edges in array & sort them all their weights
+2) Keep taking the edge with lesser weight if corresponding node does not belongs to the component to avoid cycle
+
+```Java
+public class KruskalMST {
+   public static void kruskal(Edge[] edges, int vertices) {
+      Arrays.sort(edges); // Sort edges by weight
+
+      DisjointSet ds = new DisjointSet(vertices);
+      Edge[] mst = new Edge[vertices - 1]; // Array to store MST edges
+      int edgeCount = 0;
+
+      for (Edge edge : edges) {
+         int u = edge.source;
+         int v = edge.destination;
+
+         // If u and v are in different components, include this edge
+         if (ds.find(u) != ds.find(v)) {
+            ds.union(u, v); // Union the sets
+            mst[edgeCount++] = edge; // Add edge to the MST
+         }
+      }
+
+      // Print the resulting MST
+      System.out.println("Minimum Spanning Tree:");
+      for (Edge edge : mst) {
+         if (edge != null) {
+            System.out.println(edge.source + " -- " + edge.destination + " == " + edge.weight);
+         }
+      }
+   }
+}
+```
+## Advanced Graph Algorithm
+
+### Bridges In graph (Tarjan's Algorithm)
+**An edge is called as bridge if its removal increase number of component**
+
+Ex: If only one road is present between two city and it is the only connection to join two city then that road can be considered as bridge for them
+
+![img.png](Assets/img_5.png)
+
+Result: [[4, 5], [5, 6], [8, 10]]
+
+**Important**
+- We will need two arrays, time of insertion and lowest time of insertion
+- Insertion Time refers to when a node is visited for the first time in the DFS tree.
+- Lowest Insertion Time helps us identify if there is a way to backtrack to an ancestor of a node through back edges, which determines whether an edge is a bridge or not.
+
+#### Intuition
+1) DFS Traversal: We can use Depth First Search (DFS) to traverse the graph. As we explore the graph, we try to backtrack to earlier visited nodes (or ancestors) through back edges (edges that connect a node to one of its ancestors in the DFS tree).
+
+2) Insertion Time: As we perform DFS, we keep track of the insertion time (the time a node is first visited or "inserted" into the DFS tree). This helps us understand the order in which nodes are visited during DFS.
+
+3) Lowest Insertion Time: The lowest insertion time of a node represents the smallest insertion time reachable from that node (including itself and its descendants), either by following tree edges (edges in the DFS tree) or back edges (edges connecting to ancestors in the DFS tree).
+
+4) Bridge Condition: A bridge exists between two nodes u and v if and only if there is no way to reach an ancestor of u from v through any other path except via u. More formally, if the lowest insertion time of v is greater than the insertion time of u, then the edge (u, v) is a bridge.
+
+```Java
+class Solution {
+    private int timer = 1;
+    private void dfs(int node, int parent, int[] vis,
+                     ArrayList<ArrayList<Integer>> adj, int tin[], int low[],
+                     List<List<Integer>> bridges) {
+        vis[node] = 1;
+        tin[node] = low[node] = timer;
+        timer++;
+        for (Integer it : adj.get(node)) {
+            if (it == parent) continue;
+            if (vis[it] == 0) {
+                dfs(it, node, vis, adj, tin, low, bridges);
+                low[node] = Math.min(low[node], low[it]);
+                // node --- it
+                if (low[it] > tin[node]) {
+                    bridges.add(Arrays.asList(it, node));
+                }
+            } else {
+                low[node] = Math.min(low[node], low[it]);
+            }
+        }
+    }
+    public List<List<Integer>> criticalConnections(int n, List<List<Integer>> connections) {
+        ArrayList<ArrayList<Integer>> adj =
+            new ArrayList<ArrayList<Integer>>();
+        for (int i = 0; i < n; i++) {
+            adj.add(new ArrayList<Integer>());
+        }
+        for (List<Integer> it : connections) {
+            int u = it.get(0); int v = it.get(1);
+            adj.get(u).add(v);
+            adj.get(v).add(u);
+        }
+        int[] vis = new int[n];
+        int[] tin = new int[n];
+        int[] low = new int[n];
+        List<List<Integer>> bridges = new ArrayList<>();
+        dfs(0, -1, vis, adj, tin, low, bridges);
+        return bridges;
+    }
+}
+```
+
+### Articulation Point / Cut Vertex
+**It is point/node/vertex whose removal increases the number of components in graph**
+
+```
+1----------2
+|          |
+|          |
+4----------3
+|
+|
+5
+ \
+  \                  Articulation Point: 4,5,6,8,10
+   6
+  / \
+ /   \
+7     9
+ \   /
+  \ /
+   8
+   |
+   10----11
+    \   /
+     \ /
+      12
+```
+
+**Hint:**
+- Lowest time of insertion and time of insertion of each node will be maintained
+- Focus on nodes. Removing a node will disconnect its surrounding nodes from the rest of the graph. This node is often central to many subgraphs.
+- if low[adj] >= time[node] && parent!= -1 then node will be articulation point
+- if parent = -1 then that means there is no upper half, so if you remove that node no. of components are not going to increase
+- starting node can be articulation point as well. we need to treat that differently, if child>=1 and parent = -1 that means it is articulation point
+```
+    1
+   / \
+  2   3       Here 1 is starting point and articulation point
+```
+
+```Java
+class Solution {
+    private int timer = 1;
+    private void dfs(int node, int parent, int[] vis,
+                     int tin[], int low[], int[] mark,
+                     ArrayList<ArrayList<Integer>> adj) {
+        vis[node] = 1;
+        tin[node] = low[node] = timer;
+        timer++;
+        int child = 0;
+        for (Integer it : adj.get(node)) {
+            if (it == parent) continue;
+            if (vis[it] == 0) {
+                dfs(it, node, vis, tin, low, mark, adj);
+                low[node] = Math.min(low[node], low[it]);
+                // node --- it
+                if (low[it] >= tin[node] && parent != -1) {
+                    mark[node] = 1;
+                }
+                child++;
+            } else {
+                low[node] = Math.min(low[node], tin[it]);
+            }
+        }
+        if (child > 1 && parent == -1) {
+            mark[node] = 1;
+        }
+    }
+    //Function to return Breadth First Traversal of given graph.
+    public ArrayList<Integer> articulationPoints(int n,
+            ArrayList<ArrayList<Integer>> adj) {
+        int[] vis = new int[n];
+        int[] tin = new int[n];
+        int[] low = new int[n];
+        int[] mark = new int[n];
+        for (int i = 0; i < n; i++) {
+            if (vis[i] == 0) {
+                dfs(i, -1, vis, tin, low, mark, adj);
+            }
+        }
+        ArrayList<Integer> ans = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if (mark[i] == 1) {
+                ans.add(i);
+            }
+        }
+        if (ans.size() == 0) {
+            ans.add(-1);
+        }
+        return ans;
+    }
+}
+
+```
+Time Complexity: **O(V+2E)**, where V = no. of vertices, E = no. of edges. It is because the algorithm is just a simple DFS traversal.
+
+Space Complexity: **O(3V)**, where V = no. of vertices. O(3V) is for the three arrays i.e. tin, low, and vis, each of size V.
+
+
+### Strongly connected component - Kosaraju's algo
+
+**Given a Directed Graph with V vertices (Numbered from 0 to V-1) and E edges, Find the number of strongly connected components in the graph.**
+
+![SCC](Assets/scc.png)
+
+```
+SCC1 --> SCC2 --> SCC3
+??
+SCC1 <-- SCC2 <-- SCC3
+
+Can we visit all vertices again?
+```
+- It is one componet, so we can follow path then we will able to access all vertices
+- what if we reverse edge? can we access all vertices again?
+- If yes, then that part is one SCC
+
+#### Intuition
+1) Do a depth-first search (DFS) and make a stack.
+2) Reverse all the arrows in your map.
+3) Do another DFS, based on that stack.
+4) Each complete DFS is one strongly connected group.
+
+```Java
+class Solution{
+private void dfs(int node, int []vis, ArrayList<ArrayList<Integer>> adj,
+                     Stack<Integer> st) {
+        vis[node] = 1;
+        for (Integer it : adj.get(node)) {
+            if (vis[it] == 0) {
+                dfs(it, vis, adj, st);
+            }
+        }
+        st.push(node);
+    }
+    private void dfs3(int node, int[] vis, ArrayList<ArrayList<Integer>> adjT) {
+        vis[node] = 1;
+        for (Integer it : adjT.get(node)) {
+            if (vis[it] == 0) {
+                dfs3(it, vis, adjT);
+            }
+        }
+    }
+    //Function to find number of strongly connected components in the graph.
+    public int kosaraju(int V, ArrayList<ArrayList<Integer>> adj) {
+        int[] vis = new int[V];
+        Stack<Integer> st = new Stack<Integer>();
+        for (int i = 0; i < V; i++) {
+            if (vis[i] == 0) {
+                dfs(i, vis, adj, st);
+            }
+        }
+
+        ArrayList<ArrayList<Integer>> adjT = new ArrayList<ArrayList<Integer>>();
+        for (int i = 0; i < V; i++) {
+            adjT.add(new ArrayList<Integer>());
+        }
+        for (int i = 0; i < V; i++) {
+            vis[i] = 0;
+            for (Integer it : adj.get(i)) {
+                // i -> it
+                // it -> i
+                adjT.get(it).add(i);
+            }
+        }
+        int scc = 0;
+        while (!st.isEmpty()) {
+            int node = st.peek();
+            st.pop();
+            if (vis[node] == 0) {
+                scc++;
+                dfs3(node, vis, adjT);
+            }
+        }
+        return scc;
+    }
+}
+```
