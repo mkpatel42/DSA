@@ -20,8 +20,8 @@
     - `5` in binary (32 bits): `0000 0000 0000 0000 0000 0000 0000 0101`
     - Applying `~5` (1's complement of `5`):  
       Flip all bits → `1111 1111 1111 1111 1111 1111 1111 1010`
-    - In a **signed 32-bit integer** system, 
-      this binary representation equals `-6` (using 2's complement to interpret negative numbers).
+    - In a signed 32-bit integer system, 
+      this binary representation equals `-6`.
     
     So, `~5 = -6` in 1's complement form when considering signed integers.
     ```
@@ -236,24 +236,25 @@ public class BitManipulation {
 ```
 
 ### 5. **Find the position of the rightmost set bit**:
-- To find the position of the rightmost set bit (i.e., the least significant `1`), use the expression `number & -number`.
-
-**Intuition**:
-- The negative of a number in binary (in 2's complement form) flips all bits and adds `1`. Performing an AND operation with the original number isolates the rightmost set bit.
+- To find the position of the rightmost set bit (i.e., the least significant `1`)
 
 **Formula**:  
-(number & (1 << i)) != 0
+(number & ~(number - 1))
 
 
 **Example**:  
-For `number = 10` (binary: `1010`):
-- `-10` in binary (2's complement): `0110`
-- Perform AND: `1010 & 0110 = 0010` (the rightmost set bit is at position `2`).
+```
+For n = 6:
+Binary representation: 0110
+n - 1: 0101
+~(n - 1): 1010
+n & ~(n - 1): 0110 & 1010 = 0010 (which is 2, position of right most set bit)
+```
 
 ```Java
 public class BitManipulation {
     public static int findRightmostSetBit(int number) {
-        return number & -number;
+        return number & ~(number -1);
     }
 
     public static void main(String[] args) {
@@ -263,3 +264,54 @@ public class BitManipulation {
 }
 
 ```
+
+### Problems:
+#### 1) Find whether number is even or odd
+
+**Intuition:**
+- If first bit is set then number is odd otherwise even
+- Use check ith(1st) set bit formula 
+
+```Java
+public class EvenOddCheck {
+    public static boolean isEven(int number) {
+        return (number & 1) == 0; // If LSB is 0, the number is even
+    }
+
+    public static void main(String[] args) {
+        int number1 = 4;  // Even
+        int number2 = 7;  // Odd
+
+        System.out.println(number1 + " is even: " + isEven(number1)); // Output: true
+        System.out.println(number2 + " is even: " + isEven(number2)); // Output: false
+    }
+}
+
+```
+
+**Another approach:**
+
+**Intuition:**
+- If we shift right first and then shift left then number remain same then even, otherwise odd
+
+```Java
+public class EvenOddCheck {
+    public static boolean isEven(int number) {
+        int shiftedRight = number >> 1;  // Shift right by 1 bit
+        int shiftedLeft = shiftedRight << 1;  // Shift back left by 1 bit
+        return shiftedLeft == number;  // If the number remains the same, it's even
+    }
+
+    public static void main(String[] args) {
+        int number1 = 4;  // Even
+        int number2 = 7;  // Odd
+
+        System.out.println(number1 + " is even: " + isEven(number1)); // Output: true
+        System.out.println(number2 + " is even: " + isEven(number2)); // Output: false
+    }
+}
+
+```
+
+#### 2) Check if number is power of 2
+
