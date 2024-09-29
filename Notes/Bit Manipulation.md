@@ -1,5 +1,60 @@
 # Bit Manipulation
 
+# Table of Contents
+
+1. [Bit Manipulation](#bit-manipulation)
+    - [Operators](#operators)
+        - AND (&)
+        - OR (|)
+        - XOR (^)
+        - NOT (~)
+        - Left Shift (<<)
+        - Right Shift (>>)
+        - Unsigned Right Shift (>>>)
+2. [Important Bit Manipulation Operations](#important-bit-manipulation-operations)
+    - [Check if the i-th bit is set](#1-check-if-the-i-th-bit-is-set)
+    - [Set the i-th bit of a number](#2-set-the-i-th-bit-of-a-number)
+    - [Clear the i-th bit of a number](#3-clear-the-i-th-bit-of-a-number)
+    - [Remove the last set bit of a number](#4-remove-the-last-set-bit-of-a-number)
+    - [Find the position of the rightmost set bit](#5-find-the-position-of-the-rightmost-set-bit)
+    - [Toggle the i-th bit of a number](#6-toggle-the-i-th-bit-of-a-number)
+3. [Problems](#problems)
+    - [Check if number is power of 4](#2-check-if-number-is-power-of-4)
+    - [Check if number is power of 8](#3-check-if-number-is-power-of-8)
+    - [Check if number is power of 16](#4-check-if-number-is-power-of-16)
+    - [Check if number is power of 32](#5-check-if-number-is-power-of-32)
+    - [Count Number of set bits in a number](#6-count-number-of-set-bits-in-a-number)
+    - [Single Number](#7-single-number)
+    - [Single Number II](#8-single-number-ii)
+    - [Single Number III](#9-single-number-iii)
+    - [Convert uppercase to lowercase](#10-convert-uppercase-to-lowercase)
+    - [Convert lowercase to uppercase](#11-convert-lowercase-to-uppercase)
+    - [Invert alphabets case](#12-invert-alphabets-case)
+    - [Find letter position in alphabet](#13-find-letter-position-in-alphabet)
+    - [Swap two numbers without temp variable](#14-swap-two-numbers-without-temp-variable)
+    - [Calculate XOR from 1 to n](#15-calculate-xor-from-1-to-n)
+    - [Find XOR from the range L-R](#15b-find-xor-from-the-range-lr)
+    - [Find XOR of all subset of array](#16-find-xor-of-all-subset-of-array)
+    - [Count number of bits to be flipped to convert A to B](#17-count-number-of-bits-to-be-flipped-to-convert-a-to-b)
+    - [Finding missing number in array](#18-finding-missing-number-in-array)
+    - [Print the binary representation of decimal number](#19-print-the-binary-representation-of-decimal-number)
+    - [Reverse the bits of a number](#20-reverse-the-bits-of-a-number)
+    - [Swap the ith and jth bit](#21-swap-the-ith-and-jth-bit)
+    - [Swap all even and odd bits](#22-swap-all-even-and-odd-bits)
+    - [Copy set bits in a range (Toggle set bits in a range)](#23-copy-set-bits-in-a-range-toggle-set-bits-in-a-range)
+    - [Divide two integers without using multiplication, division and mod operator](#24-divide-two-integers-without-using-multiplication-division-and-mod-operator)
+    - [Reduce a number to 1](#25-reduce-a-number-to-1)
+    - [Detect if two integers have opposite sign](#26-detect-if-two-integers-have-opposite-sign)
+    - [Add 1 to an integer](#27-add-1-to-an-integer)
+    - [Find XOR of a number without using XOR operator](#28-find-xor-of-a-number-without-using-xor-operator)
+    - [Determine if two integers are equal without using comparison and arithmetic operators](#29-determine-if-two-integers-are-equal-without-using-comparison-and-arithmetic-operators)
+    - [Find minimum or maximum of two integers without using branching](#30-find-minimum-or-maximum-of-two-integers-without-using-branching)
+4. [Leetcode Problems](#leetcode-problems)
+    - [Find Missing and Repeating Number / Set Mismatch](#1-find-missing-and-repeating-number--set-mismatch)
+    - [Maximum Product of Word Lengths (Amazon, Google)](#2-maximum-product-of-word-lengths-amazon-google)
+    - [Concatenation of Consecutive Binary Numbers](#3-concatenation-of-consecutive-binary-numbers)
+    - [Check If a String Contains All Binary Codes of Size K](#4-check-if-a-string-contains-all-binary-codes-of-size-k)
+    - [Find the Duplicate Number](#5-find-the-duplicate-number)
 
 ### Operators
 
@@ -265,6 +320,41 @@ public class BitManipulation {
 
 ```
 
+
+### 6. **Toggle the i-th bit of a number**:
+- To toggle the i-th bit (i.e., flip it from 0 to 1 or from 1 to 0), we use the expression number ^ (1 << i).
+
+**Intuition**:
+- By left-shifting 1 by i positions, we create a mask that has only the i-th bit set to 1 and all other bits set to 0.
+- The XOR operation will flip the i-th bit of the number. If the i-th bit is 1, it will become 0, and if it is 0, it will become 1.
+
+**Formula**:  
+number ^ (1 << i)
+
+**Example:**
+Example:
+For number = 12 (binary: 1100) and i = 2:
+- Create the mask: 1 << 2 → 0000 0100 (binary representation of 4).
+- Perform XOR: 1100 ^ 0100 = 1000 (binary), which equals 8 in decimal.
+
+```Java
+public class BitManipulation {
+    public static int toggleIthBit(int number, int i) {
+        return number ^ (1 << i);
+    }
+
+    public static void main(String[] args) {
+        int number = 12;  // binary: 1100
+        int i = 2;
+        System.out.println(toggleIthBit(number, i));  // Output: 8 (binary: 1000)
+
+        // Additional example: toggling the same bit again
+        System.out.println(toggleIthBit(toggleIthBit(number, i), i));  // Output: 12 (original number)
+    }
+}
+
+```
+
 ### Problems:
 #### 1) Find whether number is even or odd
 
@@ -315,3 +405,630 @@ public class EvenOddCheck {
 
 #### 2) Check if number is power of 2
 
+**Intuition:**
+- In power of 2 only one element will be set (ex: 10 or 100 or 1000)
+- If we remove that element then number should be 0
+- Can we aply remove last set bit of number algo here?
+- N & (N-1) == 0
+
+```Java
+public class PowerOfTwoCheck {
+    public static boolean isPowerOfTwo(int number) {
+        return number > 0 && (number & (number - 1)) == 0;
+    }
+
+    public static void main(String[] args) {
+        int number1 = 8;  // Power of 2
+        int number2 = 10; // Not a power of 2
+
+        System.out.println(number1 + " is power of 2: " + isPowerOfTwo(number1)); // Output: true
+        System.out.println(number2 + " is power of 2: " + isPowerOfTwo(number2)); // Output: false
+    }
+}
+```
+
+#### 2) Check if number is power of 4
+
+**Intuition:**
+- In power of 4 only one element will be set (ex: 100 or 10000)
+- It it is power of 4 then it should be power of 2 first!!
+- This thought is slightly tricky: another thing we can do number % 3 == 1 [We can leverage the fact that powers of 4 have the binary representation of a single 1 bit in even positions (0-indexed). Additionally, another way to check if a number is a power of 4 is to see if 𝑛 % 3 == 1]
+- let's combine together: power of 2 && (number % 3 == 1)
+
+```Java
+public class PowerOfFourCheck {
+    public static boolean isPowerOfFour(int number) {
+        // Check if the number is a power of 2 and if number % 3 == 1
+        return number > 0 && (number & (number - 1)) == 0 && (number % 3 == 1);
+    }
+
+    public static void main(String[] args) {
+        int number1 = 16;  // Power of 4 (4^2)
+        int number2 = 8;   // Not a power of 4
+        int number3 = 64;  // Power of 4 (4^3)
+
+        System.out.println(number1 + " is power of 4: " + isPowerOfFour(number1)); // Output: true
+        System.out.println(number2 + " is power of 4: " + isPowerOfFour(number2)); // Output: false
+        System.out.println(number3 + " is power of 4: " + isPowerOfFour(number3)); // Output: true
+    }
+}
+
+```
+
+**Similarly we can do power of 8, 16, 32 with slight change**
+
+#### 3) Check if number is power of 8
+number > 0 && (number & (number - 1)) == 0 && (number % 7 == 1);
+
+#### 4) Check if number is power of 16
+number > 0 && (number & (number - 1)) == 0 && (number % 15 == 1);
+
+#### 5) Check if number is power of 32
+number > 0 && (number & (number - 1)) == 0 && (number % 31 == 1);
+
+#### 6) Count Number of set bits in a number
+
+**Approach: 1**
+- iterate until n!=0 and shift right number AND
+- check last bit is set or not
+
+```Java
+public class BitManipulation {
+    public static int countSetBits(int number) {
+        int count = 0;
+        while (number != 0) {
+            count += (number & 1); // Increment if last bit is set
+            number >>= 1; // Right shift to check the next bit
+        }
+        return count;
+    }
+
+    public static void main(String[] args) {
+        int number = 12;  // binary: 1100
+        System.out.println(countSetBits(number));  // Output: 2
+    }
+}
+```
+
+#### Brian Kernighan's Algorithm
+**Approach: 2**
+- clear right most set bit until number is 0
+- For each iteration, increment the count of set bits.
+
+```Java
+public class BitManipulation {
+    public static int countSetBits(int number) {
+        int count = 0;
+        while (number != 0) {
+            number &= (number - 1); // Clear the rightmost set bit
+            count++; // Increment the count
+        }
+        return count;
+    }
+
+    public static void main(String[] args) {
+        int number = 12;  // binary: 1100
+        System.out.println(countSetBits(number));  // Output: 2
+    }
+}
+
+```
+
+#### 7) Single Number
+
+**Problem:**
+
+Given a non-empty array of integers nums, every element appears twice except for one. Find that single one.
+
+You must implement a solution with a linear runtime complexity and use only constant extra space.
+
+**Intuition:**
+- How can I find elements in O(n) time complexity?
+- **every element appears twice except for one**
+- Can we use xor operation to remove duplicate?
+
+```Java
+class Solution {
+    public int singleNumber(int[] nums) {
+        int xor =0;
+        for(int n: nums){
+            xor^= n;
+        }
+        return xor;
+    }
+}
+```
+
+#### 8) Single Number II
+
+**Problem:**
+
+Given an integer array nums where every element appears three times except for one, which appears exactly once. Find the single element and return it.
+
+You must implement a solution with a linear runtime complexity and use only constant extra space.
+
+**Intuition:**
+- Can we use bit manipulation?
+- Can we do bit count? if you look at each bit position individually, you know that if the number appears three times, then the total sum of bits at that position should be divisible by 3.
+- If a bit appears in the single number but not in others, the total count of bits at that position will not be divisible by 3.
+- By counting the occurrences of each bit and applying modulo 3, we can figure out the bits that belong to the single number that doesn't follow the "appearing three times" rule.
+
+**Example:**
+
+2 = 0010
+
+2 = 0010
+
+3 = 0011
+
+2 = 0010
+    
+    
+Bit count:
+0th position: 1 count
+1st position: 4 count
+2nd position: 0 count
+3rd position: 0 count
+
+
+on 0th and 1st position we have additional ones, so answer is 0011
+
+**Steps:**
+- iterate 0 to 31 bit
+- extract ith bit and add into sum
+- once we iterate all the number then we will find modulo by 3 and if we have additional one then we will set in answer
+
+```Java
+class Solution {
+    public int singleNumber(int[] nums) {
+        int result = 0;
+
+        // Iterate over every bit position (0 to 31)
+        for (int i = 0; i < 32; i++) {
+            int bitSum = 0;
+
+            // Count how many numbers have the i-th bit set
+            for (int num : nums) {
+                bitSum += (num >> i) & 1;  // Extract the i-th bit
+            }
+
+            // If the sum of bits at this position is not divisible by 3,
+            // then the single number has a '1' at this bit position.
+            if (bitSum % 3 != 0) {
+                result |= (1 << i);  // Set the i-th bit in the result
+            }
+        }
+
+        return result;
+    }
+}
+```
+
+
+#### 9) Single Number III
+
+**Problem:**
+
+Given an integer array nums, in which exactly two elements appear only once and all the other elements appear exactly twice. Find the two elements that appear only once. You can return the answer in any order.
+
+You must write an algorithm that runs in linear runtime complexity and uses only constant extra space.
+
+ **Intuition:**
+- Exactly two elements appear only once, and all the other elements appear exactly twice — how should we approach this?
+- Can we use xor operation?
+- If we do, we will get the result of num1 ^ num2, which is the XOR of the two unique numbers.
+- What does this number suggest? This result has set bits wherever the two numbers differ.
+- If we know, for example, that the 2nd bit is different, can we split the numbers into two groups — one where the 2nd bit is set, and one where it is unset?
+- In each group, the duplicate elements will cancel each other out (due to XOR), leaving only one element in each group.
+
+```Java
+class Solution {
+    public int[] singleNumber(int[] nums) {
+        // Step 1: XOR all numbers. This will give us num1 ^ num2
+        int xor = 0;
+        for (int num : nums) {
+            xor ^= num;
+        }
+
+        // Step 2: Find the rightmost set bit in the XOR result
+        int rightmostSetBit = xor & -xor;  // This isolates the rightmost set bit
+
+        // Step 3: Split numbers into two groups and XOR within each group
+        int num1 = 0, num2 = 0;
+        for (int num : nums) {
+            if ((num & rightmostSetBit) == 0) {
+                num1 ^= num;  // Group with bit not set
+            } else {
+                num2 ^= num;  // Group with bit set
+            }
+        }
+
+        // Step 4: Return the two unique numbers
+        return new int[]{num1, num2};
+    }
+}
+```
+
+#### 10) Convert Uppercase to Lowercase
+- The ASCII value of 'A' is 65, and the ASCII value of 'a' is 97.
+- Is this 32 bit diffrence?
+- If we turn on the 2^5 (or 32) bit of an uppercase letter, it will convert it to lowercase. The difference between uppercase and lowercase letters in ASCII is exactly 32.
+
+```Java
+public class UpperToLower {
+    public static char toLowerCase(char ch) {
+        return (char) (ch | (1 << 5));  // Turn on the 6th bit (add 32)
+    }
+
+    public static void main(String[] args) {
+        char uppercase = 'A';
+        char lowercase = toLowerCase(uppercase);
+        System.out.println("Lowercase of '" + uppercase + "' is: " + lowercase);  // Output: 'a'
+    }
+}
+
+```
+
+#### 11) Convert Lowercase to Uppercase
+- The difference between lowercase and uppercase letters is exactly 32 in ASCII.
+- Is this 32 bit diffrence?
+- To convert a lowercase letter to uppercase, we turn off the 6th bit (2^5 or 32), which can be done using the bitwise AND operation with ~32 (~ is the NOT operator).
+```Java
+public class LowerToUpper {
+    public static char toUpperCase(char ch) {
+        return (char) (ch & ~(1 << 5));  // Turn off the 6th bit (subtract 32)
+    }
+
+    public static void main(String[] args) {
+        char lowercase = 'a';
+        char uppercase = toUpperCase(lowercase);
+        System.out.println("Uppercase of '" + lowercase + "' is: " + uppercase);  // Output: 'A'
+    }
+}
+
+
+```
+
+#### 12) Invert Alphabet's case
+- Is this toggle 2^5 bit problem?
+
+```Java
+public class ToggleCase {
+    public static char invertCase(char ch) {
+        return (char) (ch ^ (1 << 5));  // Toggle the 6th bit (XOR with 32)
+    }
+
+    public static void main(String[] args) {
+        char uppercase = 'A';
+        char lowercase = 'a';
+        
+        // Toggle case
+        System.out.println("Inverted case of '" + uppercase + "' is: " + invertCase(uppercase));  // Output: 'a'
+        System.out.println("Inverted case of '" + lowercase + "' is: " + invertCase(lowercase));  // Output: 'A'
+    }
+}
+
+```
+
+#### 13) Find Letter position in alphabet
+- A has 64 ASCII value
+- If we remove 64 value bit then we can easily find letter position
+
+```Java
+public class AlphabetPosition {
+    public static int getPosition(char ch) {
+        return (ch | (1 << 6));  // Turn on the 7th bit (add 64)
+    }
+
+    public static void main(String[] args) {
+        char letter = 'A'; // Change this to test with different letters
+        int position = getPosition(letter);
+        System.out.println("Position of '" + letter + "' in the alphabet is: " + position); // Output: 1
+    }
+}
+
+```
+
+#### 14) Swap Two numbers without temp variable
+
+```Java
+public class SwapNumbers {
+    public static void swapUsingXOR(int a, int b) {
+        a = a ^ b;  // XOR a and b
+        b = a ^ b;  // XOR the new a with b gives original a
+        a = a ^ b;  // XOR the new a with new b gives original b
+
+        System.out.println("After swapping: a = " + a + ", b = " + b);
+    }
+
+    public static void main(String[] args) {
+        int a = 5;
+        int b = 10;
+        System.out.println("Before swapping: a = " + a + ", b = " + b);
+        swapUsingXOR(a, b);
+    }
+}
+
+```
+
+#### 15) Calculate xor from 1 to n
+**Intuition:**
+- One way is to iterate from 1 to n and find the answer
+-  If it were that easy, it wouldn’t be a question!
+- Is there any operator that can provide the answer quickly? Not really!
+- Can we find pattern?
+
+1 -> 1
+
+1 ^ 2 -> 3
+
+1 ^ 2 ^ 3 -> 3 ^ 3 -> 0
+
+1 ^ 2 ^ 3 ^ 4 -> 0 ^ 4 -> 4
+
+(1-4) ^ 5 -> 4 ^ 5 -> 100 ^ 1001 -> 1
+
+(1-5) ^ 6 -> 1 ^ 6 -> 1 ^ 110 -> 7
+
+(1-6) ^ 7 -> 7 ^ 7 -> 0
+
+(1-7) ^ 8 -> 0 ^ 8 -> 8
+
+Let's find pattern:
+
+we observed repeatation after 4th elements
+
+**if(n%4 == 0) => n**
+
+**if(n%4== 1) => 1**
+
+**if(n%4 == 2) => n+1;**
+
+**if(n%4 == 3) => 0**
+
+```Java
+public class XORFrom1ToN {
+    public static int calculateXOR(int n) {
+        switch (n % 4) {
+            case 0:
+                return n;
+            case 1:
+                return 1;
+            case 2:
+                return n + 1;
+            case 3:
+                return 0;
+            default:
+                return -1; // This case should never occur
+        }
+    }
+
+    public static void main(String[] args) {
+        int n = 5; // Example input
+        System.out.println("XOR from 1 to " + n + " is: " + calculateXOR(n)); // Output: 1
+    }
+}
+
+```
+
+#### 15.b) Find xor from the range [L,R]
+**Intuition:**
+- Can we find x or of 1 to R and 1 to L-1
+- [1, R] ^ [1, L-1]
+- 1 to L-1 will be repeated and removed through xor operation
+
+#### 16) Find xor of all subset of array
+
+**Example:**
+
+[1,2,3]
+
+Subsets: [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
+
+1^2^(1^2)^3^(1^3)^(2^3)^(1^2^3)
+
+Answer = 0
+
+**Intuition:**
+- If we have size of array greater than 1 then we will have even number of elements and answer would be 0
+
+```Java
+public class XOROfSubsets {
+    public static int findXOROfSubsets(int[] nums) {
+        if (nums.length == 1) {
+            return nums[0];
+        }
+       
+        return 0;
+    }
+
+    public static void main(String[] args) {
+        int[] nums = {1, 2, 3};
+        int result = findXOROfSubsets(nums);
+        System.out.println("XOR of all subsets: " + result);  // Output: 0
+    }
+}
+
+```
+
+#### 17) Count number of bits to be flipped to convert A to B
+**Intuition:**
+- we need to find bits which is different
+- xor can handle that easily; find xor of 2 numbers and count number of set bits in (num1 ^ num2)
+
+```Java
+public class BitFlipCounter {
+    // Function to count the number of set bits
+    public static int countSetBits(int number) {
+        int count = 0;
+        while (number > 0) {
+            count += (number & 1); // Increment count if the last bit is set
+            number >>= 1;          // Right shift the number by 1
+        }
+        return count;
+    }
+
+    // Function to count the number of bits to be flipped to convert A to B
+    public static int countBitsToFlip(int A, int B) {
+        int xor = A ^ B; // XOR A and B
+        return countSetBits(xor); // Count the number of set bits in the XOR result
+    }
+
+    public static void main(String[] args) {
+        int A = 29; // Example number A (binary: 11101)
+        int B = 15; // Example number B (binary: 01111)
+        int bitsToFlip = countBitsToFlip(A, B);
+        System.out.println("Number of bits to be flipped to convert A to B: " + bitsToFlip);  // Output: 2
+    }
+}
+
+```
+#### 18) Finding missing number in array
+
+**Problem:**
+Given an array nums containing n distinct numbers in the range [0,n], return the only number in the range that is missing from the array.
+
+**Intuition:**
+- Can we do xor of given aray with range [0,n]
+- Duplicate elements will be discarded only missing number will be present
+
+```Java
+public class MissingNumberFinder {
+    // Function to find the missing number in the array
+    public static int findMissingNumber(int[] nums) {
+        int n = nums.length; // Length of the array
+        int xorAll = 0; // XOR of all numbers from 0 to n
+        int xorArray = 0; // XOR of all elements in the array
+
+        // XOR all numbers from 0 to n
+        for (int i = 0; i <= n; i++) {
+            xorAll ^= i;
+        }
+
+        // XOR all elements in the given array
+        for (int num : nums) {
+            xorArray ^= num;
+        }
+
+        // The missing number will be the XOR of xorAll and xorArray
+        return xorAll ^ xorArray;
+    }
+
+    public static void main(String[] args) {
+        int[] nums = {3, 0, 1}; // Example array with missing number 2
+        int missingNumber = findMissingNumber(nums);
+        System.out.println("The missing number is: " + missingNumber); // Output: 2
+    }
+}
+
+```
+
+#### 19) Print the binary representation of decimal number
+
+**Inuition:**
+- To convert a decimal number to binary, repeatedly divide the number by 2.
+- For each division, record the remainder (either 0 or 1).
+- Insert each remainder at the starting position of the binary representation, as the last remainder obtained represents the least significant bit (LSB) while the first remainder represents the most significant bit (MSB).
+
+```Java
+public class BinaryRepresentation {
+    // Function to print the binary representation of a decimal number
+    public static void printBinary(int number) {
+        StringBuilder binaryString = new StringBuilder();
+     
+        while (number > 0) {
+            binaryString.insert(0, number % 2); // Insert the remainder at the beginning
+            number /= 2; // Divide number by 2
+        }
+        
+        System.out.println("The binary representation is: " + binaryString.toString());
+    }
+
+    public static void main(String[] args) {
+        int number = 10; // Example decimal number
+        printBinary(number); // Output: 1010
+    }
+}
+
+```
+
+#### 20) Reverse the bits of a number
+
+**Inuition:**
+- Start with an answer initialized to 0.
+  - While the given number is not 0, do the following:
+    - Extract the least significant bit (LSB) of the number using bitwise AND with 1.
+    - If the extracted bit is 1, set the corresponding bit in the answer.
+    - Right-shift the given number to process the next bit.
+    - Left-shift the answer to make space for the next bit.
+- Repeat this until all bits of the number have been processed.
+
+```Java
+public class BitManipulation {
+    public static int reverseBits(int number) {
+        int reversed = 0;
+        while (number != 0) {
+            // Extract the least significant bit
+            int lsb = number & 1; 
+            // Left shift the reversed number to make space for the next bit
+            reversed = (reversed << 1) | lsb; 
+            // Right shift the original number to process the next bit
+            number >>= 1; 
+        }
+        return reversed;
+    }
+
+    public static void main(String[] args) {
+        int number = 13; // binary: 1101
+        System.out.println("Reversed bits of " + number + " is: " + reverseBits(number)); // Output: 11 (binary: 1011)
+    }
+}
+
+```
+
+#### 21) Swap the ith and Jth bit.
+# PENDNG
+
+#### 22) Swap all even and odd bits
+# PENDNG
+
+#### 23) Copy set bits in a range, toggle set bits in a range:
+# PENDNG
+
+#### 24) Divide two integers without using Multiplication, Division and mod operator:
+# PENDNG
+
+#### 25) Reduce a Number to 1:
+# PENDNG
+
+#### 26) Detect if two integers have opposite sign:
+# PENDNG
+
+#### 27) Add 1 to an integer:
+# PENDNG
+
+#### 28) Find Xor of a number without using XOR operator:
+# PENDNG
+
+#### 29) Determine if two integers are equal without using comparison and arithmetic operators
+# PENDNG
+
+#### 30) Find minimum or maximum of two integers without using branching
+# PENDNG
+
+### Leetcode Problems:
+
+#### 1) Find missing and repeating number / Set mismatch
+# PENDNG
+
+#### 2) Maximum Product of Word Lengths (Amazon, google)
+# PENDNG
+
+#### 3) Concatenation of Consecutive Binary Numbers
+# PENDNG
+
+#### 4) Check if a String Contains all binary codes of size k
+# PENDNG
+
+#### 5) Find the Duplicate Number
+# PENDNG
