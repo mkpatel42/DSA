@@ -21,7 +21,7 @@
 
 ## Introduction
 
-Binary Search is an efficient algorithm used to find a target element in a sorted array or search space. It works by repeatedly dividing the search space in half, making it much faster than a linear search, especially for large datasets.
+Binary Search is an efficient algorithm used to find a target element in a **sorted array or search space**. It works by repeatedly dividing the search space in half, making it much faster than a linear search, especially for large datasets.
 ## Real-Time Example of Binary Search
 
 ### Scenario: Searching for a Name in a Phonebook
@@ -43,11 +43,11 @@ Imagine you have a **phonebook** sorted alphabetically, and you want to find the
 - In a large phonebook, this means finding the name much faster than checking every entry.
 
 
-####However, implementing it correctly can be tricky due to common pitfalls like:
+#### However, implementing it correctly can be tricky due to common pitfalls like:
 
-- Choosing the right loop exit condition (`left < right` vs. `left <= right`)
-- Initializing boundary variables (`left` and `right`)
-- Updating boundaries correctly (`left = mid`, `left = mid + 1`, etc.)
+- **Choosing the right loop exit condition (`left < right` vs. `left <= right`)**
+- **Initializing boundary variables (`left` and `right`)**
+- **Updating boundaries correctly (`left = mid`, `left = mid + 1`, etc.)**
 
 Binary Search can be applied to a wide range of problems beyond simple array searches.
 
@@ -641,7 +641,9 @@ Each result of division is rounded to the nearest integer greater than or equal 
 ## Example:
 
 Input: nums = [1,2,5,9], threshold = 6
+
 Output: 5
+
 Explanation: We can get a sum to 17 (1+2+5+9) if the divisor is 1.
 If the divisor is 4 we can get a sum to 7 (1+1+2+3) and if the divisor is 5 the sum will be 5 (1+1+1+2).
 
@@ -651,37 +653,38 @@ We can use binary search to find the smallest divisor. The condition function ch
 
 ```java
 class Solution {
-    public int smallestDivisor(int[] nums, int threshold) {
-        int left = 1;
-        int right = getMaxElement(nums);
-        
-        while (left < right) {
-            int mid = left + (right - left) / 2;
-            if (condition(nums, mid, threshold)) {
-                right = mid;
-            } else {
-                left = mid + 1;
-            }
-        }
-        
-        return left;
-    }
-    
-    private boolean condition(int[] nums, int divisor, int threshold) {
-        int sum = 0;
-        for (int num : nums) {
-            sum += (num - 1) / divisor + 1;
-        }
-        return sum <= threshold;
-    }
-    
-    private int getMaxElement(int[] nums) {
-        int max = nums;
-        for (int num : nums) {
-            max = Math.max(max, num);
-        }
-        return max;
-    }
+   public int smallestDivisor(int[] nums, int threshold) {
+      int left = 1;
+      int right = getMaxElement(nums);
+
+      while (left < right) {
+         int mid = left + (right - left) / 2;
+         if (condition(nums, mid, threshold)) {
+            right = mid;
+         } else {
+            left = mid + 1;
+         }
+      }
+
+      return left;
+   }
+
+   private boolean condition(int[] nums, int divisor, int threshold) {
+      int sum = 0;
+      for (int num : nums) {
+         int remainder = num % divisor;
+         sum +=  (remainder == 0 ? (num / divisor):(num / divisor) + 1);
+      }
+      return sum <= threshold;
+   }
+
+   private int getMaxElement(int[] nums) {
+      int max = nums[0];
+      for (int num : nums) {
+         max = Math.max(max, num);
+      }
+      return max;
+   }
 }
 ```
 
