@@ -987,32 +987,329 @@ public class BitManipulation {
 ```
 
 #### 21) Swap the ith and Jth bit.
-# PENDNG
+
+
+**Example:**
+- `num = 43`, `i = 2`, `j = 5`.
+- Binary representation of `43`: `00101011`.
+
+**Output:**
+- After swapping the bits at positions `2` and `5`, the output should be `57` (binary: `00111001`).
+
+**Step-by-step Process:**
+
+1) Initial Binary Representation:
+
+
+    num = 43
+    
+    Binary of 43 = 00101011
+
+3) Identify the ith and jth bits:
+
+
+    Position i = 2: Look at the second bit from the right, which is 1.
+    
+    Position j = 5: Look at the fifth bit from the right, which is 0.
+    
+    So, we have:
+    
+    ith bit = 1
+    
+    jth bit = 0
+
+3) Check if the bits are different:
+
+
+    Since the ith and jth bits are different (1 and 0), we need to swap them.
+
+4) Swap the bits:
+
+
+    We toggle the ith and jth bits using XOR (^) operation.
+    
+    Toggle the 2nd bit: 00101011 ^ (1 << 1) → 00101011 ^ 00000010 → 00101001.
+    
+    Toggle the 5th bit: 00101001 ^ (1 << 4) → 00101001 ^ 00010000 → 00111001.
+
+**Final result:**
+
+After the swap, the binary representation becomes 00111001, which is 57 in decimal.
+
+**Intuition:**
+- Check ith bit is set or not [ A =  (n >> i-1) & 1 ]
+- Check jth bit is set or not [ B = (n >> j-1) & 1 ]
+- now we have 2 possibility; both bits are same or opposite [ temp = (A ^ B) ]
+- For same bit, we don't need to do anything
+- For opposite, we can apply toggle bit approach
+
+  Number = temp << (i-1) ^ Number
+
+  Number = temp << (j-1) ^ Number
+
+
+```Java
+public class BitManipulation {
+    public static int swapBits(int n, int i, int j) {
+        // Check if ith bit is set
+        int A = (n >> (i - 1)) & 1;
+        
+        // Check if jth bit is set
+        int B = (n >> (j - 1)) & 1;
+        
+        // XOR of A and B
+        int temp = A ^ B;
+        
+        // If bits are different, swap them
+        if (temp != 0) {
+            // Toggle ith bit
+            n ^= (1 << (i - 1));
+            
+            // Toggle jth bit
+            n ^= (1 << (j - 1));
+        }
+        
+        return n;
+    }
+
+    public static void main(String[] args) {
+        int number = 10;  // Binary: 1010
+        int i = 2;
+        int j = 4;
+        
+        System.out.println("Original number: " + number);
+        int result = swapBits(number, i, j);
+        System.out.println("After swapping " + i + "th and " + j + "th bits: " + result);
+    }
+}
+```
 
 #### 22) Swap all even and odd bits
-# PENDNG
+**Intuition:**
+- Can we use above approach?
+- Instead of odd even, can we assume 1st and 2nd bit and swap them
+- If we do same process for all the position, would it be our answer?
+
+**Above approach is not optimized, can we optimize that?**
+- What if we know all the even positions where bits are set?
+- Similarly, can we determine all the odd positions where bits are set?
+- If we shift them and combine the results, would that give us the answer?
+
+**Example:**
+
+Let's take the integer `23`, which has the binary representation:
+
+    23 in binary: 0000 0000 0000 0000 0000 0000 0001 0111
+    (binary: ...10101010) to extract even bits
+    (binary: ...01010101) to extract odd bits
+    number & mask will have set bits
+    swap and combine even amd odd bits
+
+```Java
+public class SwapEvenOddBits {
+    public static int swapEvenOddBits(int num) {
+        // Define masks for even and odd bits using binary literals
+        final int EVEN_MASK = 0b10101010101010101010101010101010; // 0xAAAAAAAA
+        final int ODD_MASK = 0b01010101010101010101010101010101;  // 0x55555555
+
+        // Isolate even and odd bits
+        int evenBits = num & EVEN_MASK;
+        int oddBits = num & ODD_MASK;
+
+        // Shift even bits right and odd bits left
+        int evenBitsShifted = evenBits >> 1;
+        int oddBitsShifted = oddBits << 1;
+
+        // Combine the shifted bits
+        return evenBitsShifted | oddBitsShifted;
+    }
+
+    public static void main(String[] args) {
+        int number = 23; // Binary: 10111
+        int swappedNumber = swapEvenOddBits(number);
+        System.out.println(Integer.toBinaryString(swappedNumber)); // Output will be the binary representation after swapping
+    }
+}
+
+```
+
 
 #### 23) Copy set bits in a range, toggle set bits in a range:
-# PENDNG
+**Problem:**
+Copy set bit-we have two numbers A and B, and  we want to copy the bits of B to A for a given range [to R from LSB to MSB.
 
-#### 24) Divide two integers without using Multiplication, Division and mod operator:
-# PENDNG
+**Intuition:**
+- We want to create mask for L to R (1111) where L=3 and R = 7
+- extract set bits from both numbers
+- swap them
 
+??
+- How can we create mask?
+- Can we create 1111 of size R-L? [ (1 << (R - L + 1 ) - 1]
+- Shift that to L position [ mask << (L - 1)]
+- Toogle bit (N ^ mask)
+
+#### 24) Divide two integers without using Multiplication, Division and mod operator
+**Approach:1**
+- Keep subtracting the divisor from dividend untill divident less than divisor
+
+**Example:**
+Dividend = 10
+Divisor = 3
+Quotient = 3
+
+10 - 3 = 7
+
+7 - 3 = 4
+
+4 - 3 = 1 < 3
+
+**Approach:2**
+
+**Handle Edge Cases:** 
+- If the divisor is 0, return an error or infinity (undefined).
+- If the dividend is Integer.MIN_VALUE and the divisor is -1, return Integer.MAX_VALUE (to avoid overflow).
+
+**Convert to Positive:** 
+- Work with positive numbers by using the absolute values of the dividend and divisor. Keep track of whether the result should be negative or positive by checking if the signs of dividend and divisor are different.
+
+**Bit Manipulation:**
+- Use bit shifts to perform the division operation.
+- Left shift the divisor until it's greater than or equal to the dividend, then subtract the shifted divisor from the dividend and count how many times you shifted. The total count gives you the quotient.
+- Essentially, we're trying to subtract multiples of the divisor as much as possible without exceeding the dividend.
+
+**Final Result:**
+- Restore the sign of the result and check for overflow (return Integer.MAX_VALUE if overflow occurs).
+
+```Java
+public class DivideWithoutOperators {
+
+    public static int divide(int dividend, int divisor) {
+        // Handle edge case: overflow
+        if (dividend == Integer.MIN_VALUE && divisor == -1) {
+            return Integer.MAX_VALUE;  // Overflow case
+        }
+
+        // Determine the sign of the result
+        boolean negative = (dividend < 0) ^ (divisor < 0);
+
+        // Convert dividend and divisor to positive long values
+        long absDividend = Math.abs((long) dividend);
+        long absDivisor = Math.abs((long) divisor);
+
+        int result = 0;
+
+        // Perform division using bit manipulation
+        while (absDividend >= absDivisor) {
+            long tempDivisor = absDivisor, multiple = 1;
+            
+            // Shift left the divisor until it's less than or equal to the dividend
+            while (absDividend >= (tempDivisor << 1)) {
+                tempDivisor <<= 1;
+                multiple <<= 1;
+            }
+
+            // Subtract the largest shifted divisor from the dividend
+            absDividend -= tempDivisor;
+            result += multiple;
+        }
+
+        // Apply the correct sign to the result
+        return negative ? -result : result;
+    }
+
+    public static void main(String[] args) {
+        int dividend = 43;
+        int divisor = 5;
+        System.out.println("Quotient: " + divide(dividend, divisor));  // Output: 8
+    }
+}
+
+```
 #### 25) Reduce a Number to 1:
 # PENDNG
 
-#### 26) Detect if two integers have opposite sign:
+#### 26) Detect if two integers have opposite sign
+
+**Intuition:**
+- signed integers in computer are store in 2's complement form: where MSB fit represent the sign of the number
+
+     1 -> Negative integer
+
+     0 -> positive integer
+
+- So, if we do ^(xor) of two numbers then it will be negative because MSB (1^0) = 1 which shows negative number
+
+```Java
+public class OppositeSigns {
+
+    public static boolean hasOppositeSigns(int a, int b) {
+        // XOR the two numbers and check if the result is negative
+        return (a ^ b) < 0;
+    }
+
+    public static void main(String[] args) {
+        int a = 5;    // Positive
+        int b = -10;  // Negative
+
+        if (hasOppositeSigns(a, b)) {
+            System.out.println(a + " and " + b + " have opposite signs.");
+        } else {
+            System.out.println(a + " and " + b + " do not have opposite signs.");
+        }
+    }
+}
+
+```
+#### 27) Add 1 to an integer
 # PENDNG
 
-#### 27) Add 1 to an integer:
-# PENDNG
+#### 28) Find Xor of a number without using XOR operator
 
-#### 28) Find Xor of a number without using XOR operator:
-# PENDNG
+**Property of XOR:**
+a^b = (a∧¬b)∨(¬a∧b)
+
+- This equation means that XOR can be rewritten in terms of AND (&), OR (|), and NOT (~) operations:
+
+```Java
+public class XorWithoutOperator {
+
+    // Function to compute XOR without using the ^ operator
+    public static int xor(int a, int b) {
+        return (a & ~b) | (~a & b);
+    }
+
+    public static void main(String[] args) {
+        int a = 5;   // binary: 0101
+        int b = 3;   // binary: 0011
+        int result = xor(a, b);
+
+        System.out.println("XOR of " + a + " and " + b + " is: " + result);  // Output: 6
+    }
+}
+
+```
 
 #### 29) Determine if two integers are equal without using comparison and arithmetic operators
-# PENDNG
+- We can achieve by xor
+```Java
+public class EqualIntegers {
+    public static boolean areEqual(int a, int b) {
+        return (a ^ b) == 0;
+    }
 
+    public static void main(String[] args) {
+        int num1 = 5;
+        int num2 = 5;
+        if (areEqual(num1, num2)) {
+            System.out.println("Numbers are equal.");
+        } else {
+            System.out.println("Numbers are not equal.");
+        }
+    }
+}
+ 
+```
 #### 30) Find minimum or maximum of two integers without using branching
 # PENDNG
 
