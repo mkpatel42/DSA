@@ -631,7 +631,7 @@ class Solution {
         }
 
         // Step 2: Find the rightmost set bit in the XOR result
-        int rightmostSetBit = xor & -xor;  // This isolates the rightmost set bit
+        int rightmostSetBit = xor & ~(xor - 1);  // This isolates the rightmost set bit
 
         // Step 3: Split numbers into two groups and XOR within each group
         int num1 = 0, num2 = 0;
@@ -717,7 +717,7 @@ public class ToggleCase {
 ```Java
 public class AlphabetPosition {
     public static int getPosition(char ch) {
-        return (ch | (1 << 6));  // Turn on the 7th bit (add 64)
+        return (ch & ~(1 << 6));  // Turn off the 7th bit (add 64)
     }
 
     public static void main(String[] args) {
